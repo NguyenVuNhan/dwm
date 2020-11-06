@@ -112,6 +112,7 @@ static const char *termcmd[]  = { TERMINAL, NULL };
 
 #include <X11/XF86keysym.h>
 #include "shiftview.c"
+#include "focusurgent.c"
 static Key keys[] = {
 	/* modifier                  key        	            function        argument */
     /* Basic */
@@ -123,6 +124,7 @@ static Key keys[] = {
 	{ MODKEY,					XK_s,		                togglesticky,	{0} },
 	{ MODKEY,			        XK_h,		                setmfact,	    {.f = -0.05} },
 	{ MODKEY,			        XK_l,		                setmfact,      	{.f = +0.05} },
+	{ MODKEY,                   XK_u,                       focusurgent,    {0} },
 	STACKKEYS(MODKEY,                      	                focus)
 	STACKKEYS(MODKEY|ShiftMask,            	                push)
 
