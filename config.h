@@ -118,6 +118,7 @@ static Key keys[] = {
 	{ MODKEY,			        XK_q,		                killclient,	    {0} },
 	{ MODKEY,			        XK_f,		                togglefullscr,	{0} },
 	{ MODKEY,			        XK_Tab,		                view,		    {0} },
+	{ MODKEY|ShiftMask,		    XK_r,	                    spawn,		    SHCMD("kill -HUP $(pgrep -u $USER '\bdwm$')") },
 	STACKKEYS(MODKEY,                      	                focus)
 	STACKKEYS(MODKEY|ShiftMask,            	                push)
 
