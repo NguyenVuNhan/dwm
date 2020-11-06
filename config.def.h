@@ -119,6 +119,10 @@ static Key keys[] = {
 	{ MODKEY,			        XK_f,		                togglefullscr,	{0} },
 	{ MODKEY,			        XK_Tab,		                view,		    {0} },
 	{ MODKEY|ShiftMask,		    XK_r,	                    spawn,		    SHCMD("kill -HUP $(pgrep -u $USER '\bdwm$')") },
+	{ MODKEY|ShiftMask,		    XK_space,	                togglefloating,	{0} },
+	{ MODKEY,					XK_s,		                togglesticky,	{0} },
+	{ MODKEY,			        XK_h,		                setmfact,	    {.f = -0.05} },
+	{ MODKEY,			        XK_l,		                setmfact,      	{.f = +0.05} },
 	STACKKEYS(MODKEY,                      	                focus)
 	STACKKEYS(MODKEY|ShiftMask,            	                push)
 
@@ -131,13 +135,11 @@ static Key keys[] = {
 	{ MODKEY|SUBKEY|ShiftMask,	XK_6,		                setlayout,	    {.v = &layouts[5]} }, /* monocle */
 	{ MODKEY|SUBKEY|ShiftMask,	XK_7,		                setlayout,	    {.v = &layouts[6]} }, /* centeredmaster */
 	{ MODKEY|SUBKEY|ShiftMask,	XK_8,		                setlayout,	    {.v = &layouts[7]} }, /* centeredfloatingmaster */
-	{ MODKEY,			        XK_o,		                incnmaster,     {.i = +1 } },
-	{ MODKEY|ShiftMask,		    XK_o,		                incnmaster,     {.i = -1 } },
+	{ MODKEY,			        XK_m,		                incnmaster,     {.i = +1 } },
+	{ MODKEY|ShiftMask,		    XK_m,		                incnmaster,     {.i = -1 } },
 	{ MODKEY,			        XK_space,	                zoom,		    {0} },		      /* master toggle */
-	{ MODKEY|ShiftMask,		    XK_space,	                togglefloating,	{0} },
-	{ MODKEY,					XK_s,		                togglesticky,	{0} },
-	{ MODKEY,			        XK_h,		                setmfact,	    {.f = -0.05} },
-	{ MODKEY,			        XK_l,		                setmfact,      	{.f = +0.05} },
+	{ MODKEY|ControlMask,		XK_comma,                   cyclelayout,    {.i = -1 } },
+	{ MODKEY|ControlMask,       XK_period,                  cyclelayout,    {.i = +1 } },
 
 	/* Workspace/tag */
 	TAGKEYS(			        XK_1,		                		        0)
@@ -153,10 +155,10 @@ static Key keys[] = {
     { MODKEY,                   XK_period,                  focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,		    XK_h,	                    tagmon,		    {.i = -1 } },
 	{ MODKEY|ShiftMask,		    XK_l,	                    tagmon,		    {.i = +1 } },
-	{ MODKEY,			        XK_Page_Up,	                shiftview,	    { .i = -1 } },
-	{ MODKEY|ShiftMask,		    XK_Page_Up,	                shifttag,	    { .i = -1 } },
-	{ MODKEY,			        XK_Page_Down,	            shiftview,	    { .i = +1 } },
-	{ MODKEY|ShiftMask,		    XK_Page_Down,	            shifttag,	    { .i = +1 } },
+	{ MODKEY,			        XK_Page_Up,	                shiftview,	    {.i = -1 } },
+	{ MODKEY|ShiftMask,		    XK_Page_Up,	                shifttag,	    {.i = -1 } },
+	{ MODKEY,			        XK_Page_Down,	            shiftview,	    {.i = +1 } },
+	{ MODKEY|ShiftMask,		    XK_Page_Down,	            shifttag,	    {.i = +1 } },
 
 	/* Gaps */
 	{ MODKEY,			        XK_g,		                togglegaps,	    {0} },
@@ -212,7 +214,8 @@ static Button buttons[] = {
 	{ ClkStatusText,        0,              Button5,        sigdwmblocks,   {.i = 5} },
 	{ ClkStatusText,        ShiftMask,      Button1,        sigdwmblocks,   {.i = 6} },
 #endif
-    { ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
+    { ClkLtSymbol,          0,              Button4,        cyclelayout,    {.i = -1} },
+    { ClkLtSymbol,          0,              Button5,        cyclelayout,    {.i = +1} },
 	{ ClkStatusText,        ShiftMask,      Button3,        spawn,          SHCMD(TERMINAL " -e nvim ~/.local/suckless/dwmblocks/config.h") },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        defaultgaps,	{0} },
