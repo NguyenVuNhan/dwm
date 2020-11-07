@@ -75,25 +75,27 @@ static const Rule rules[] = {
 static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+
 #define FORCE_VSPLIT 1  /* nrowgrid layout: force two clients to always split vertically */
 #include "vanitygaps.c"
 
-#include "gridlayout.c"
-#include "gaplessgrid.c"
 static const Layout layouts[] = {
 	/* symbol     arrange function */
  	{ "[]=",	tile },			/* Default: Master on left, slaves on right */
-	{ "TTT",	bstack },		/* Master on top, slaves on bottom */
 	{ "[@]",	spiral },		/* Fibonacci spiral */
 	{ "[\\]",	dwindle },		/* Decreasing in size right and leftward */
 	{ "H[]",	deck },			/* Master on left, slaves in monocle-like mode on right */
+	{ "TTT",	bstack },		/* Master on top, slaves on bottom */
+	{ "===",    bstackhoriz },
+    { "HHH",    grid },         /* Grid layout */
+	{ "###",    nrowgrid },     /* Similart to gaplessgrid but horizontal */
+	{ ":::",    gaplessgrid },  /* Grid layout with no gap */
  	{ "[M]",	monocle },		/* All windows on top of eachother */
 	{ "|M|",	centeredmaster },		/* Master in middle, slaves on sides */
 	{ ">M>",	centeredfloatingmaster },	/* Same but master floats */
-    { "HHH",    grid },         /* Grid layout */
-    { "###",    gaplessgrid },  /* Grid layout with no gap */
+	{ "---",    horizgrid },
 	{ "><>",	NULL },			/* no layout function means floating behavior */
-	{ NULL,		NULL },
+	{ NULL,     NULL },
 };
 
 /* key definitions */
@@ -146,6 +148,9 @@ static Key keys[] = {
 	{ MODKEY,			        XK_m,		                incnmaster,     {.i = +1 } },
 	{ MODKEY|ShiftMask,		    XK_m,		                incnmaster,     {.i = -1 } },
 	{ MODKEY,			        XK_space,	                zoom,		    {0} },		      /* master toggle */
+	{ MODKEY,                   XK_w,                       setcfact,       {.f = +0.25} },
+	{ MODKEY|ShiftMask,         XK_w,                       setcfact,       {.f = -0.25} },
+	{ MODKEY|SUBKEY|ShiftMask,  XK_w,                       setcfact,       {.f =  0.00} },
 
 	/* Application */
 	{ MODKEY,			        XK_Return,	                spawn,		    {.v = termcmd } },
