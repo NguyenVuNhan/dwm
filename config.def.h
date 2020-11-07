@@ -34,11 +34,11 @@ typedef struct {
 	const void *cmd;
 } Sp;
 const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "120x34", NULL };
-const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=16", "-g", "50x20", "-e", "bc", "-lq", NULL };
+const char *spcmd2[] = {TERMINAL, "-n", "sppython", "-g", "50x30", "-e", "python", NULL };
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spterm",      spcmd1},
-	{"spranger",    spcmd2},
+	{"sppython",    spcmd2},
 };
 
 /* tagging */
@@ -51,6 +51,7 @@ static const Rule rules[] = {
 	*/
 	/* class        instance        title       	tags mask isfloating isterminal noswallow monitor */
 	{ "Gimp",       NULL,           NULL,       	1 << 8,   0,         0,         0,        -1 },
+	{ "Firefox",    NULL,           NULL,       	0,        0,         0,         0,        -1 },
 	{ "vlc",        NULL,           NULL,       	1 << 7,   0,         0,         0,        -1 },
 	{ "TuxGuitar",  NULL,           NULL,       	1 << 6,   0,         0,         0,        -1 },
 	{ "spotify",    NULL,           NULL,           1 << 6,   0,         0,         0,        -1 },
@@ -59,7 +60,7 @@ static const Rule rules[] = {
 	{ NULL,         "float-center", NULL,       	0,        1,         1,         0,        -1 },
 	{ NULL,         NULL,           "Event Tester", 0,        0,         0,         1,        -1 },
 	{ NULL,         "spterm",       NULL,       	SPTAG(0), 1,         1,         0,        -1 },
-	{ NULL,         "spcalc",       NULL,       	SPTAG(1), 1,         1,         0,        -1 },
+	{ NULL,         "sppython",     NULL,       	SPTAG(1), 1,         1,         0,        -1 },
 };
 
 /* layout(s) */
@@ -115,18 +116,38 @@ static const char *termcmd[]  = { TERMINAL, NULL };
 #include "focusurgent.c"
 static Key keys[] = {
 	/* modifier                  key        	            function        argument */
-    /* Basic */
 	{ MODKEY,			        XK_q,		                killclient,	    {0} },
-	{ MODKEY,			        XK_f,		                togglefullscr,	{0} },
-	{ MODKEY,			        XK_Tab,		                view,		    {0} },
-	{ MODKEY|ShiftMask,		    XK_r,	                    spawn,		    SHCMD("kill -HUP $(pgrep -u $USER '\bdwm$')") },
+	{ MODKEY|ShiftMask,			XK_r,		                quit,	        {0} }, /* Reload dwm */
+	{ MODKEY,                   XK_u,                       focusurgent,    {0} },
+
+    /* View */
+	STACKKEYS(MODKEY|ShiftMask,            	                push)
 	{ MODKEY|ShiftMask,		    XK_space,	                togglefloating,	{0} },
+	{ MODKEY,			        XK_f,		                togglefullscr,	{0} },
 	{ MODKEY,					XK_s,		                togglesticky,	{0} },
+	{ MODKEY,			        XK_Tab,		                view,		    {0} },
 	{ MODKEY,			        XK_h,		                setmfact,	    {.f = -0.05} },
 	{ MODKEY,			        XK_l,		                setmfact,      	{.f = +0.05} },
-	{ MODKEY,                   XK_u,                       focusurgent,    {0} },
-	STACKKEYS(MODKEY,                      	                focus)
-	STACKKEYS(MODKEY|ShiftMask,            	                push)
+	{ MODKEY,			        XK_g,		                togglegaps,	    {0} },
+	{ MODKEY|ShiftMask,		    XK_g,		                defaultgaps,	{0} },
+	{ MODKEY,			        XK_i,		                incrgaps,	    {.i = +3 } },
+	{ MODKEY|ShiftMask,		    XK_i,		                incrgaps,	    {.i = -3 } },
+	{ MODKEY|ShiftMask,		    XK_b,		                togglebar,	    {0} },
+	{ MODKEY,			        XK_0,		                view,		    {.ui = ~0 } },
+	{ MODKEY|ShiftMask,		    XK_0,		                tag,		    {.ui = ~0 } },
+	{ MODKEY,			        XK_m,		                incnmaster,     {.i = +1 } },
+	{ MODKEY|ShiftMask,		    XK_m,		                incnmaster,     {.i = -1 } },
+	{ MODKEY,			        XK_space,	                zoom,		    {0} },		      /* master toggle */
+
+	/* Application */
+	{ MODKEY,			        XK_Return,	                spawn,		    {.v = termcmd } },
+	{ MODKEY,			        XK_b,		                spawn,		    SHCMD("$BROWSER") },
+	{ MODKEY,			        XK_c,		                spawn,		    SHCMD("code") },
+	{ MODKEY,			        XK_u,		                togglescratch,	{.ui = 0} },
+	{ MODKEY,			        XK_p,		                togglescratch,	{.ui = 1} },
+	{ MODKEY,			        XK_d,		                spawn,          {.v = dmenucmd } },
+	{ MODKEY,		            XK_F4,		                spawn,		    SHCMD("pmenu") },
+	{ MODKEY|SUBKEY|ShiftMask,	XK_d,		                spawn,		    SHCMD("display-switcher") },
 
 	/* Layout */
 	{ MODKEY|SUBKEY|ShiftMask,	XK_1,		                setlayout,	    {.v = &layouts[0]} }, /* tile */
@@ -137,13 +158,11 @@ static Key keys[] = {
 	{ MODKEY|SUBKEY|ShiftMask,	XK_6,		                setlayout,	    {.v = &layouts[5]} }, /* monocle */
 	{ MODKEY|SUBKEY|ShiftMask,	XK_7,		                setlayout,	    {.v = &layouts[6]} }, /* centeredmaster */
 	{ MODKEY|SUBKEY|ShiftMask,	XK_8,		                setlayout,	    {.v = &layouts[7]} }, /* centeredfloatingmaster */
-	{ MODKEY,			        XK_m,		                incnmaster,     {.i = +1 } },
-	{ MODKEY|ShiftMask,		    XK_m,		                incnmaster,     {.i = -1 } },
-	{ MODKEY,			        XK_space,	                zoom,		    {0} },		      /* master toggle */
 	{ MODKEY|ControlMask,		XK_comma,                   cyclelayout,    {.i = -1 } },
 	{ MODKEY|ControlMask,       XK_period,                  cyclelayout,    {.i = +1 } },
 
-	/* Workspace/tag */
+	/* Navigating */
+	STACKKEYS(MODKEY,                      	                focus)
 	TAGKEYS(			        XK_1,		                		        0)
 	TAGKEYS(			        XK_2,		                		        1)
 	TAGKEYS(			        XK_3,		                		        2)
@@ -158,49 +177,21 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,		    XK_h,	                    tagmon,		    {.i = -1 } },
 	{ MODKEY|ShiftMask,		    XK_l,	                    tagmon,		    {.i = +1 } },
 	{ MODKEY,			        XK_Page_Up,	                shiftview,	    {.i = -1 } },
-	{ MODKEY|ShiftMask,		    XK_Page_Up,	                shifttag,	    {.i = -1 } },
 	{ MODKEY,			        XK_Page_Down,	            shiftview,	    {.i = +1 } },
+	{ MODKEY|ShiftMask,		    XK_Page_Up,	                shifttag,	    {.i = -1 } },
 	{ MODKEY|ShiftMask,		    XK_Page_Down,	            shifttag,	    {.i = +1 } },
-
-	/* Gaps */
-	{ MODKEY,			        XK_g,		                togglegaps,	    {0} },
-	{ MODKEY|ShiftMask,		    XK_g,		                defaultgaps,	{0} },
-	{ MODKEY,			        XK_i,		                incrgaps,	    {.i = +3 } },
-	{ MODKEY|ShiftMask,		    XK_i,		                incrgaps,	    {.i = -3 } },
-
-	/* Scratchpads & floating & menu */
-	{ MODKEY,			        XK_u,		                togglescratch,	{.ui = 0} },
-	{ MODKEY,			        XK_p,		                togglescratch,	{.ui = 1} },
-	{ MODKEY,			        XK_d,		                spawn,          {.v = dmenucmd } },
-	{ MODKEY,		            XK_F4,		                spawn,		    SHCMD("pmenu") },
-	{ MODKEY|SUBKEY|ShiftMask,	XK_d,		                spawn,		    SHCMD("display-switcher") },
-
-	/* Bar */
-	{ MODKEY|ShiftMask,		    XK_b,		                togglebar,	    {0} },
-	{ MODKEY,			        XK_0,		                view,		    {.ui = ~0 } },
-	{ MODKEY|ShiftMask,		    XK_0,		                tag,		    {.ui = ~0 } },
 
     /* Media control */
 	{ 0,                        XF86XK_AudioMute,		    spawn,		    SHCMD("pulsemixer --toggle-mute; kill -44 $(pidof dwmblocks)") },
-	{ MODKEY|SUBKEY,            XK_F1,		                spawn,		    SHCMD("pulsemixer --toggle-mute; kill -44 $(pidof dwmblocks)") },
-	{ 0,                        XF86XK_AudioRaiseVolume,	spawn,		    SHCMD("pulsemixer --change-volume +5; kill -44 $(pidof dwmblocks)") },
-	{ MODKEY|SUBKEY,            XK_F3,		                spawn,		    SHCMD("pulsemixer --change-volume +5; kill -44 $(pidof dwmblocks)") },
 	{ 0,                        XF86XK_AudioLowerVolume,	spawn,		    SHCMD("pulsemixer --change-volume -5; kill -44 $(pidof dwmblocks)") },
+	{ 0,                        XF86XK_AudioRaiseVolume,	spawn,		    SHCMD("pulsemixer --change-volume +5; kill -44 $(pidof dwmblocks)") },
+	{ MODKEY|SUBKEY,            XK_F1,		                spawn,		    SHCMD("pulsemixer --toggle-mute; kill -44 $(pidof dwmblocks)") },
 	{ MODKEY|SUBKEY,            XK_F2,		                spawn,		    SHCMD("pulsemixer --change-volume -5; kill -44 $(pidof dwmblocks)") },
-
-    /* Funtion */
+	{ MODKEY|SUBKEY,            XK_F3,		                spawn,		    SHCMD("pulsemixer --change-volume +5; kill -44 $(pidof dwmblocks)") },
 	{ 0,				        XK_Print,	                spawn,		    SHCMD("maim -m 1 screenshot-$(date '+%y%m%d-%H%M-%S').png") },
 	{ ShiftMask,		        XK_Print,	                spawn,		    SHCMD("maim -s -m 1 screenshot-$(date '+%y%m%d-%H%M-%S').png") },
 	{ ControlMask,				XK_Print,	                spawn,		    SHCMD("maim -m 1 | xclip -selection clipboard -t image/png") },
 	{ ControlMask|ShiftMask,	XK_Print,	                spawn,		    SHCMD("maim -s -m 1 | xclip -selection clipboard -t image/png") },
-
-	/* Application */
-	{ MODKEY,			        XK_Return,	                spawn,		    {.v = termcmd } },
-	{ MODKEY,			        XK_b,		                spawn,		    SHCMD("$BROWSER") },
-	{ MODKEY,			        XK_c,		                spawn,		    SHCMD("code") },
-
-	/* Other */
-	{ ShiftMask,			    XK_space,	                spawn,		    SHCMD("kill -45 $(pidof dwmblocks)") },
 };
 
 /* button definitions */
