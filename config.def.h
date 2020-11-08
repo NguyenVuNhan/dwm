@@ -60,12 +60,11 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	*/
 	/* class        instance        title       	tags mask isfloating isterminal noswallow monitor */
-	{ "Gimp",       NULL,           NULL,       	1 << 8,   0,         0,         0,        -1 },
+	{ "Gimp",       NULL,           NULL,       	1 << 8,   0,         0,         1,        -1 },
 	{ "Firefox",    NULL,           NULL,       	0,        0,         0,         0,        -1 },
 	{ "vlc",        NULL,           NULL,       	1 << 7,   0,         0,         0,        -1 },
 	{ "TuxGuitar",  NULL,           NULL,       	1 << 6,   0,         0,         0,        -1 },
-	{ "spotify",    NULL,           NULL,           1 << 6,   0,         0,         0,        -1 },
-	{ "Spotify",    NULL,           NULL,           1 << 6,   0,         0,         0,        -1 },
+	{ "Spotify",    "spotify",      NULL,           1 << 6,   0,         0,         0,        -1 },
 	{ TERMCLASS,    NULL,           NULL,       	0,        0,         1,         0,        -1 },
 	{ NULL,         "float-center", NULL,       	0,        1,         1,         0,        -1 },
 	{ NULL,         NULL,           "Event Tester", 0,        0,         0,         1,        -1 },
@@ -228,8 +227,8 @@ static Button buttons[] = {
     { ClkLtSymbol,          0,              Button5,        cyclelayout,    {.i = +1} },
 	{ ClkStatusText,        ShiftMask,      Button3,        spawn,          SHCMD(TERMINAL " -e nvim ~/.local/suckless/dwmblocks/config.h") },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
+	{ ClkClientWin,       MODKEY|ShiftMask, Button1,        resizemouse,    {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        defaultgaps,	{0} },
-	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
 	{ ClkClientWin,		    MODKEY,		    Button4,	    incrgaps,	    {.i = +1} },
 	{ ClkClientWin,		    MODKEY,		    Button5,	    incrgaps,	    {.i = -1} },
 	{ ClkTagBar,            0,              Button1,        view,           {0} },
