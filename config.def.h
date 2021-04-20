@@ -10,7 +10,7 @@ static const unsigned int snap      = 32;       /* snap pixel */
 static const unsigned int gappih    = 20;       /* horiz inner gap between windows */
 static const unsigned int gappiv    = 10;       /* vert inner gap between windows */
 static const unsigned int gappoh    = 10;       /* horiz outer gap between windows and screen edge */
-static const unsigned int gappov    = 30;       /* vert outer gap between windows and screen edge */
+static const unsigned int gappov    = 10;       /* vert outer gap between windows and screen edge */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static const int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static const int showbar            = 1;        /* 0 means no bar */
@@ -18,7 +18,7 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 static const int horizpadbar        = 10;        /* horizontal padding for statusbar */
 static const int vertpadbar         = 10;        /* vertical padding for statusbar */
 static const char *fonts[]          = { "monospace:size=10", "FontAwesome:size=12" };
-static char dmenufont[]             = "monospace:size=10";
+static char dmenufont[]             = "monospace:size=12";
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
@@ -43,8 +43,8 @@ typedef struct {
 	const char *name;
 	const void *cmd;
 } Sp;
-const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "120x34", NULL };
-const char *spcmd2[] = {TERMINAL, "-n", "sppython", "-g", "50x30", "-e", "python", NULL };
+const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "120x34", "-e", "tmux", NULL };
+const char *spcmd2[] = {TERMINAL, "-n", "sppython", "-g", "120x30", "-e", "python", NULL };
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spterm",      spcmd1},
@@ -61,7 +61,6 @@ static const Rule rules[] = {
 	*/
 	/* class        instance        title       	tags mask isfloating isterminal noswallow monitor */
 	{ "Gimp",       NULL,           NULL,       	1 << 8,   0,         0,         1,        -1 },
-	{ "Firefox",    NULL,           NULL,       	0,        0,         0,         0,        -1 },
 	{ "vlc",        NULL,           NULL,       	1 << 7,   0,         0,         0,        -1 },
 	{ "TuxGuitar",  NULL,           NULL,       	1 << 6,   0,         0,         0,        -1 },
 	{ "Spotify",    "spotify",      NULL,           1 << 6,   0,         0,         0,        -1 },
@@ -84,15 +83,15 @@ static const int attachdirection = 3;   /* 0 default, 1 above, 2 aside, 3 below,
 static const Layout layouts[] = {
 	/* symbol     arrange function */
  	{ "[]=",	tile },			/* Default: Master on left, slaves on right */
+	{ "TTT",	bstack },		/* Master on top, slaves on bottom */
+ 	{ "[M]",	monocle },		/* All windows on top of eachother */
 	{ "[@]",	spiral },		/* Fibonacci spiral */
 	{ "[\\]",	dwindle },		/* Decreasing in size right and leftward */
 	{ "H[]",	deck },			/* Master on left, slaves in monocle-like mode on right */
-	{ "TTT",	bstack },		/* Master on top, slaves on bottom */
 	{ "===",    bstackhoriz },
     { "HHH",    grid },         /* Grid layout */
 	{ "###",    nrowgrid },     /* Similart to gaplessgrid but horizontal */
 	{ ":::",    gaplessgrid },  /* Grid layout with no gap */
- 	{ "[M]",	monocle },		/* All windows on top of eachother */
 	{ "|M|",	centeredmaster },		/* Master in middle, slaves on sides */
 	{ ">M>",	centeredfloatingmaster },	/* Same but master floats */
 	{ "---",    horizgrid },
@@ -161,8 +160,10 @@ static Key keys[] = {
 	{ MODKEY,			        XK_u,		                togglescratch,	{.ui = 0} },
 	{ MODKEY,			        XK_p,		                togglescratch,	{.ui = 1} },
 	{ MODKEY,			        XK_d,		                spawn,          {.v = dmenucmd } },
+	{ MODKEY,		            XK_F1,		                spawn,		    SHCMD("st -n float-center -e pulsemixer") },
 	{ MODKEY,		            XK_F4,		                spawn,		    SHCMD("pmenu") },
-	{ MODKEY|SUBKEY|ShiftMask,	XK_d,		                spawn,		    SHCMD("display-switcher") },
+	{ MODKEY,		            XK_F7,		                spawn,		    SHCMD("sink-switcher") },
+	{ MODKEY,	                XK_F8,		                spawn,		    SHCMD("display-switcher") },
 
 	/* Layout */
 	{ MODKEY|SUBKEY|ShiftMask,	XK_1,		                setlayout,	    {.v = &layouts[0]} }, /* tile */
@@ -203,10 +204,11 @@ static Key keys[] = {
 	{ MODKEY|SUBKEY,            XK_F1,		                spawn,		    SHCMD("pulsemixer --toggle-mute; kill -44 $(pidof dwmblocks)") },
 	{ MODKEY|SUBKEY,            XK_F2,		                spawn,		    SHCMD("pulsemixer --change-volume -5; kill -44 $(pidof dwmblocks)") },
 	{ MODKEY|SUBKEY,            XK_F3,		                spawn,		    SHCMD("pulsemixer --change-volume +5; kill -44 $(pidof dwmblocks)") },
-	{ 0,				        XK_Print,	                spawn,		    SHCMD("maim -m 1 screenshot-$(date '+%y%m%d-%H%M-%S').png") },
-	{ ShiftMask,		        XK_Print,	                spawn,		    SHCMD("maim -s -m 1 screenshot-$(date '+%y%m%d-%H%M-%S').png") },
+	{ 0,				        XK_Print,	                spawn,		    SHCMD("maim -m 1 ~/Pictures/screenshot-$(date '+%y%m%d-%H%M-%S').png") },
+	{ ShiftMask,		        XK_Print,	                spawn,		    SHCMD("maim -s -m 1 ~/Pictures/screenshot-$(date '+%y%m%d-%H%M-%S').png") },
 	{ ControlMask,				XK_Print,	                spawn,		    SHCMD("maim -m 1 | xclip -selection clipboard -t image/png") },
 	{ ControlMask|ShiftMask,	XK_Print,	                spawn,		    SHCMD("maim -s -m 1 | xclip -selection clipboard -t image/png") },
+    { SUBKEY,                   XK_F1,                      spawn,	        SHCMD("BLOCK_BUTTON=1 ibus_language; kill -45 $(pidof dwmblocks)")}
 };
 
 /* button definitions */
