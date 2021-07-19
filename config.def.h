@@ -17,7 +17,7 @@ static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const int horizpadbar        = 10;        /* horizontal padding for statusbar */
 static const int vertpadbar         = 10;        /* vertical padding for statusbar */
-static const char *fonts[]          = { "monospace:size=10", "FontAwesome:size=12" };
+static const char *fonts[]          = { "monospace:size=12", "FontAwesome:size=12", "JoyPixels:size=13" };
 static char dmenufont[]             = "monospace:size=12";
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
@@ -25,7 +25,7 @@ static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#eeeeee";
 static char selbordercolor[]        = "#770000";
 static char selbgcolor[]            = "#444444";
-static const unsigned int baralpha  = 0xa0;
+static const unsigned int baralpha  = 0xf0;
 static const unsigned int borderalpha = OPAQUE;
 static char *colors[][3] = {
        /*               fg           bg           border   */
@@ -64,6 +64,7 @@ static const Rule rules[] = {
 	{ "vlc",        NULL,           NULL,       	1 << 7,   0,         0,         0,        -1 },
 	{ "TuxGuitar",  NULL,           NULL,       	1 << 6,   0,         0,         0,        -1 },
 	{ "Spotify",    "spotify",      NULL,           1 << 6,   0,         0,         0,        -1 },
+	{ NULL,      NULL,"WineDesktop - Wine desktop", 0,        1,         1,         0,        -1 },
 	{ TERMCLASS,    NULL,           NULL,       	0,        0,         1,         0,        -1 },
 	{ NULL,         "float-center", NULL,       	0,        1,         1,         0,        -1 },
 	{ NULL,         NULL,           "Event Tester", 0,        0,         0,         1,        -1 },
@@ -208,7 +209,7 @@ static Key keys[] = {
 	{ ShiftMask,		        XK_Print,	                spawn,		    SHCMD("maim -s -m 1 ~/Pictures/screenshot-$(date '+%y%m%d-%H%M-%S').png") },
 	{ ControlMask,				XK_Print,	                spawn,		    SHCMD("maim -m 1 | xclip -selection clipboard -t image/png") },
 	{ ControlMask|ShiftMask,	XK_Print,	                spawn,		    SHCMD("maim -s -m 1 | xclip -selection clipboard -t image/png") },
-    { SUBKEY,                   XK_F1,                      spawn,	        SHCMD("BLOCK_BUTTON=1 ibus_language; kill -45 $(pidof dwmblocks)")}
+    { SUBKEY,                   XK_F1,                      spawn,	        SHCMD("BLOCK_BUTTON=1 sb_language; kill -45 $(pidof dwmblocks)")}
 };
 
 /* button definitions */
